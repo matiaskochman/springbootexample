@@ -37,22 +37,11 @@ public class UserDaoImpl implements UserDao{
 		
 		//curl http://74.50.59.155:6000/api/users
 		
-//		String 
-//        URI uri = util.getServiceUrl("product", "http://localhost:8081/product");
-//        String url = uri.toString() + "/product/" + productId;
-//        LOG.debug("GetProduct from URL: {}", url);
-
         ResponseEntity<String> resultStr = restTemplate.getForEntity(URL_USERS, String.class);
         LOG.debug("GetUserList http-status: {}", resultStr.getStatusCode());
         LOG.debug("GetUserList body: {}", resultStr.getBody());
 
         System.out.println(resultStr);
-//		InputStream stream = new ByteArrayInputStream(data.getBytes(StandardCharsets.UTF_8));
-//
-//        JsonReader reader = Json.createReader(stream);
-//        JsonObject empObj = reader.readObject();
-//        JsonObject query = empObj.getJsonObject("query");
-//        JsonObject results = query.getJsonObject("results");        
         List<User> userList = response2UserList(resultStr);
 
         return userList;
@@ -61,11 +50,10 @@ public class UserDaoImpl implements UserDao{
     private List<User> response2UserList(ResponseEntity<String> response) {
         try {
             ObjectMapper mapper = new ObjectMapper();
-            //List list = mapper.readValue(response.getBody(), new TypeReference<List<User>>() {});
             Users users = mapper.readValue(response.getBody(), new TypeReference<Users>() {});
 
-            List<User> recommendations = users.getUsers();	
-            return recommendations;
+            List<User> userList = users.getUsers();	
+            return userList;
 
         } catch (IOException e) {
             LOG.warn("IO-err. Failed to read JSON", e);
