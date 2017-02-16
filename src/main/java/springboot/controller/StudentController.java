@@ -11,7 +11,9 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import springboot.entity.Student;
+import springboot.entity.User;
 import springboot.service.StudentService;
+import springboot.service.UserService;
 
 @RestController
 @RequestMapping("/students")
@@ -19,6 +21,14 @@ public class StudentController {
 
 	@Autowired
 	private StudentService studentService;
+
+	@Autowired
+	private UserService userService;
+	
+	@RequestMapping(method=RequestMethod.PATCH)
+	public Collection<User> getAllUsers(){
+		return this.userService.getAllUsers();
+	}
 	
 	@RequestMapping(method=RequestMethod.GET)
 	public Collection<Student> getAllStudents(){
