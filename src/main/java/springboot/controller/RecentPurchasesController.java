@@ -21,7 +21,7 @@ public class RecentPurchasesController {
 	@Autowired
 	private PurchaseService purchaseService;	
 	
-	@RequestMapping(value="/{username}",method=RequestMethod.GET)
+	@RequestMapping(value="/{username:.+}",method=RequestMethod.GET)
 	public ResponseEntity<Object> getPopularPurchases(@PathVariable String username){
 		
 		//List<ProductAggregated> list = this.purchaseService.getAllPopularPurchases();
@@ -32,7 +32,7 @@ public class RecentPurchasesController {
 			return new ResponseEntity<>(list,HttpStatus.OK);
 		}else{
 			
-			return new ResponseEntity<Object>("User with username of"+username+" was not found", new HttpHeaders(), HttpStatus.NO_CONTENT);
+			return new ResponseEntity<Object>("User with username of "+username+" was not found", new HttpHeaders(), HttpStatus.NOT_FOUND);
 		}
 
 	}

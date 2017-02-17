@@ -45,13 +45,67 @@ public class PurchaseService {
 	public List<ProductAggregated> getPopularPurchasesByUser(String username){
 		
 		User user = userService.getUser(username);
-		
 		if(user==null){
 			return null;
 		}
 		
-		return null;
+		Collection<Purchase> purchaseList = null;				
+		Map<String,ProductAggregated> productAggregatedMap = new HashMap<String,ProductAggregated>();
+		ProductAggregated prodAg = null;		
 		
+		processUser(user, productAggregatedMap);
+		
+		Set<String> keys = productAggregatedMap.keySet();
+		
+		List<ProductAggregated> productAggregatedList = new ArrayList<ProductAggregated>();		
+		ProductAggregated pa = null;
+		
+		for (String productId : keys) {
+			pa = productAggregatedMap.get(productId);
+			boolean result = productAggregatedList.add(pa);
+		}
+
+	    Collections.sort(productAggregatedList, new Comparator<ProductAggregated>() {
+	        @Override
+	        public int compare(ProductAggregated pa1, ProductAggregated pa2) {
+	        	if(pa1.getSold() < pa2.getSold()){
+	        		return 1;
+	        	}else{
+	        		return -1;
+	        	}
+
+	        }
+	    });		
+
+		return productAggregatedList;
+		
+	}
+
+	private void processUser(User user, Map<String, ProductAggregated> productAggregatedMap) {
+		Collection<Purchase> purchaseList;
+		ProductAggregated prodAg;
+		purchaseList = this.getLast5PurchaseByUser(user.getUsername());
+
+		for (Purchase purchase : purchaseList) {
+			
+			if(productAggregatedMap.containsKey(purchase.getProductId().toString())){
+				ProductAggregated pa = productAggregatedMap.get(purchase.getProductId().toString());
+				pa.getUsernameSet().add(purchase.getusername());
+				pa.setSold(pa.getSold()+1);
+			}else{
+				prodAg = new ProductAggregated();
+				
+				Product product = productService.getProductById(purchase.getProductId().toString());
+				prodAg.setId(product.getId());
+				prodAg.setFace(product.getFace());
+				prodAg.setPrice(product.getPrice());
+				prodAg.setSize(product.getSize());
+				prodAg.getUsernameSet().add(purchase.getusername());
+				prodAg.setSold(1);
+				productAggregatedMap.put(purchase.getProductId().toString(), prodAg);
+
+			}
+		}
 	}
 	
 	public List<ProductAggregated> getAllPopularPurchases() {
@@ -65,28 +119,7 @@ public class PurchaseService {
 		
 		for (User user : userList) {
 			
-			purchaseList = this.getLast5PurchaseByUser(user.getUsername());
-
-			for (Purchase purchase : purchaseList) {
-				
-				if(productAggregatedMap.containsKey(purchase.getProductId().toString())){
-					ProductAggregated pa = productAggregatedMap.get(purchase.getProductId().toString());
-					pa.getUsernameSet().add(purchase.getusername());
-					pa.setSold(pa.getSold()+1);
-				}else{
-					prodAg = new ProductAggregated();
-					
-					Product product = productService.getProductById(purchase.getProductId().toString());
-					prodAg.setId(product.getId());
-					prodAg.setFace(product.getFace());
-					prodAg.setPrice(product.getPrice());
-					prodAg.setSize(product.getSize());
-					prodAg.getUsernameSet().add(purchase.getusername());
-					prodAg.setSold(1);
-					productAggregatedMap.put(purchase.getProductId().toString(), prodAg);
-
-				}
-			}
+			processUser(user, productAggregatedMap);
 			
 		}
 		
