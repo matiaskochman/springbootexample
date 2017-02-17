@@ -2,6 +2,8 @@ package springboot.dao;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -14,6 +16,7 @@ import org.springframework.web.client.RestTemplate;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import springboot.composite.ProductAggregated;
 import springboot.entity.User;
 
 @Repository
@@ -27,8 +30,6 @@ public class UserDaoImpl implements UserDao{
     
 	@Override
 	public List<User> getAllUsers() {
-		
-		//curl http://74.50.59.155:6000/api/users
 		
         ResponseEntity<String> resultStr = restTemplate.getForEntity(URL_USERS, String.class);
         LOG.debug("GetUserList http-status: {}", resultStr.getStatusCode());
@@ -56,7 +57,26 @@ public class UserDaoImpl implements UserDao{
             LOG.warn("RTE-err. Failed to read JSON", re);
             throw re;
         }
-    }	
+    }
+
+	@Override
+	public User getUser(String username) {
+		
+        ResponseEntity<String> resultStr = restTemplate.getForEntity(URL_USERS, String.class);
+        LOG.debug("GetUserList http-status: {}", resultStr.getStatusCode());
+        LOG.debug("GetUserList body: {}", resultStr.getBody());
+
+        System.out.println(resultStr);
+        List<User> userList = response2UserList(resultStr);
+        
+        for (User user : userList) {
+			if(user.getUsername().equals(username)){
+				return user;
+			}
+		}
+        
+		return null;
+	}	
 
 }
 class UsersJson{

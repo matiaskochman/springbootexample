@@ -6,4 +6,6 @@ import springboot.entity.User;
 
 public interface UserDao {
 	Collection<User> getAllUsers();
+
+	User getUser(String username);
 }

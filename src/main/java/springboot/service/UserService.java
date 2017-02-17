@@ -18,5 +18,9 @@ public class UserService {
 	
 	public Collection<User> getAllUsers(){
 		return userDao.getAllUsers();
+	}
+
+	public User getUser(String username) {
+		return userDao.getUser(username);
 	}	
 }

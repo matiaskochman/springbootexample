@@ -1,6 +1,9 @@
 package springboot.controller;
 
 import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+import java.util.SortedSet;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -10,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import springboot.composite.ProductAggregated;
 import springboot.entity.Product;
 import springboot.entity.Purchase;
 import springboot.entity.Student;
@@ -34,6 +38,12 @@ public class StudentController {
 	
 	@Autowired
 	private ProductService productService;
+	
+	
+	@RequestMapping(value="/popularPurchases",method=RequestMethod.GET)
+	public List<ProductAggregated> getPopularPurchases(){
+		return this.purchaseService.getAllPopularPurchases();
+	}
 	
 	@RequestMapping(value="/product",method=RequestMethod.GET)
 	public Product getProductById(){
