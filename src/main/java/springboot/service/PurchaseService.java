@@ -18,6 +18,10 @@ public class PurchaseService {
 	
 	public Collection<Purchase> getLast5PurchaseByUser(String username){
 		return purchaseDao.getLast5PurchaseByUser(username);
-	}	
+	}
+	
+	public Collection<Purchase> getPurchasesByProductId(String productId){
+		return purchaseDao.getPurchasesByProductId(productId);
+	}
 	
 }

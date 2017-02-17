@@ -1,6 +1,7 @@
 package springboot.dao;
 
 import java.io.IOException;
+import java.util.Collection;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -19,8 +20,8 @@ import springboot.entity.Purchase;
 @Qualifier("purchaseData")
 public class PurchaseDaoImpl implements PurchaseDao{
 
-	public static String URL_LAST_5_PURCHASES = "http://74.50.59.155:6000/api/purchases/by_user/:username?limit=5";
-	public static String URL_LAST_5_PURCHASES_BASE = "http://74.50.59.155:6000/api/purchases/by_user/";
+	public static final String URL_PURCHASES_BY_USER_ID = "http://74.50.59.155:6000/api/purchases/by_user/";
+	public static final String URL_PURCHASES_BY_PRODUCT_ID = "http://74.50.59.155:6000/api/purchases/by_product/";
 	
 	private static final Logger LOG = LoggerFactory.getLogger(UserDaoImpl.class);
 	private RestTemplate restTemplate = new RestTemplate();
@@ -29,7 +30,7 @@ public class PurchaseDaoImpl implements PurchaseDao{
 	@Override
 	public List<Purchase> getLast5PurchaseByUser(String username) {
 		
-        ResponseEntity<String> resultStr = restTemplate.getForEntity(URL_LAST_5_PURCHASES_BASE+username+"?limit=5", String.class);
+        ResponseEntity<String> resultStr = restTemplate.getForEntity(URL_PURCHASES_BY_USER_ID+username+"?limit=5", String.class);
         LOG.debug("GetUserList http-status: {}", resultStr.getStatusCode());
         LOG.debug("GetUserList body: {}", resultStr.getBody());		
 		
@@ -55,7 +56,20 @@ public class PurchaseDaoImpl implements PurchaseDao{
             LOG.warn("RTE-err. Failed to read JSON", re);
             throw re;
         }
-    }	
+    }
+
+	@Override
+	public Collection<Purchase> getPurchasesByProductId(String productId) {
+		
+        ResponseEntity<String> resultStr = restTemplate.getForEntity(URL_PURCHASES_BY_PRODUCT_ID+productId, String.class);
+        LOG.debug("GetUserList http-status: {}", resultStr.getStatusCode());
+        LOG.debug("GetUserList body: {}", resultStr.getBody());		
+		
+        
+        List<Purchase> userList = response2PurchaseList(resultStr);
+
+        return userList;
+	}	
 
 }
 class Purchases{

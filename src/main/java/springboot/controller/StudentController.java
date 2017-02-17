@@ -31,10 +31,14 @@ public class StudentController {
 	private PurchaseService purchaseService;
 	
 	
-	@RequestMapping(value="/purchases",method=RequestMethod.GET)
+	@RequestMapping(value="/purchasesByUser",method=RequestMethod.GET)
 	public Collection<Purchase> getLast5PurchasesByUser(){
 		return this.purchaseService.getLast5PurchaseByUser("Kiarra86");
 	}
+	@RequestMapping(value="/purchasesByProduct",method=RequestMethod.GET)
+	public Collection<Purchase> getPurchasesByProductId(){
+		return this.purchaseService.getPurchasesByProductId("817522");
+	}	
 	
 	@RequestMapping(value="/users",method=RequestMethod.GET)
 	public Collection<User> getAllUsers(){
