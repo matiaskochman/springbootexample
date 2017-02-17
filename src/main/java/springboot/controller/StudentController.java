@@ -10,15 +10,17 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import springboot.entity.Product;
 import springboot.entity.Purchase;
 import springboot.entity.Student;
 import springboot.entity.User;
+import springboot.service.ProductService;
 import springboot.service.PurchaseService;
 import springboot.service.StudentService;
 import springboot.service.UserService;
 
 @RestController
-@RequestMapping("/students")
+@RequestMapping("/xteam")
 public class StudentController {
 
 	@Autowired
@@ -30,6 +32,13 @@ public class StudentController {
 	@Autowired
 	private PurchaseService purchaseService;
 	
+	@Autowired
+	private ProductService productService;
+	
+	@RequestMapping(value="/product",method=RequestMethod.GET)
+	public Product getProductById(){
+		return this.productService.getProductById("817522");
+	}
 	
 	@RequestMapping(value="/purchasesByUser",method=RequestMethod.GET)
 	public Collection<Purchase> getLast5PurchasesByUser(){

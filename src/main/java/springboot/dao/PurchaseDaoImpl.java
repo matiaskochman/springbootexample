@@ -17,7 +17,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import springboot.entity.Purchase;
 
 @Repository
-@Qualifier("purchaseData")
+@Qualifier("purchaseRestData")
 public class PurchaseDaoImpl implements PurchaseDao{
 
 	public static final String URL_PURCHASES_BY_USER_ID = "http://74.50.59.155:6000/api/purchases/by_user/";
@@ -26,6 +26,7 @@ public class PurchaseDaoImpl implements PurchaseDao{
 	private static final Logger LOG = LoggerFactory.getLogger(UserDaoImpl.class);
 	private RestTemplate restTemplate = new RestTemplate();
 	
+
 	
 	@Override
 	public List<Purchase> getLast5PurchaseByUser(String username) {
@@ -43,7 +44,7 @@ public class PurchaseDaoImpl implements PurchaseDao{
     private List<Purchase> response2PurchaseList(ResponseEntity<String> response) {
         try {
             ObjectMapper mapper = new ObjectMapper();
-            Purchases purchases = mapper.readValue(response.getBody(), new TypeReference<Purchases>() {});
+            PurchasesJson purchases = mapper.readValue(response.getBody(), new TypeReference<PurchasesJson>() {});
 
             List<Purchase> purchaseList = purchases.getPurchases();
             return purchaseList;
@@ -69,18 +70,19 @@ public class PurchaseDaoImpl implements PurchaseDao{
         List<Purchase> userList = response2PurchaseList(resultStr);
 
         return userList;
-	}	
+	}
+
 
 }
-class Purchases{
+class PurchasesJson{
 	private List<Purchase> purchases;
 
-	public Purchases() {
+	public PurchasesJson() {
 		super();
 
 	}
 
-	public Purchases(List<Purchase> purchases) {
+	public PurchasesJson(List<Purchase> purchases) {
 		super();
 		this.purchases = purchases;
 	}

@@ -1,15 +1,8 @@
 package springboot.dao;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
-
-import javax.json.Json;
-import javax.json.JsonObject;
-import javax.json.JsonReader;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,7 +17,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import springboot.entity.User;
 
 @Repository
-@Qualifier("userData")
+@Qualifier("userRestData")
 public class UserDaoImpl implements UserDao{
 
 	private static final Logger LOG = LoggerFactory.getLogger(UserDaoImpl.class);
@@ -50,7 +43,7 @@ public class UserDaoImpl implements UserDao{
     private List<User> response2UserList(ResponseEntity<String> response) {
         try {
             ObjectMapper mapper = new ObjectMapper();
-            Users users = mapper.readValue(response.getBody(), new TypeReference<Users>() {});
+            UsersJson users = mapper.readValue(response.getBody(), new TypeReference<UsersJson>() {});
 
             List<User> userList = users.getUsers();	
             return userList;
@@ -66,15 +59,15 @@ public class UserDaoImpl implements UserDao{
     }	
 
 }
-class Users{
+class UsersJson{
 	
 	private List<User> users;
 	
-	public Users() {
+	public UsersJson() {
 		
 	}
 	
-	public Users(ArrayList<User> users) {
+	public UsersJson(ArrayList<User> users) {
 		
 		this.users = users;
 	}

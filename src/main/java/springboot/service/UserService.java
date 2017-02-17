@@ -13,7 +13,7 @@ import springboot.entity.User;
 public class UserService {
 	
 	@Autowired
-	@Qualifier("userData")
+	@Qualifier("userRestData")
 	private UserDao userDao;
 	
 	public Collection<User> getAllUsers(){
