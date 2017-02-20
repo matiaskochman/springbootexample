@@ -5,6 +5,7 @@ import java.io.IOException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Repository;
 import org.springframework.web.client.RestTemplate;
@@ -24,6 +25,7 @@ public class ProductDaoImpl implements ProductDao{
 	private RestTemplate restTemplate = new RestTemplate();
 	
 	@Override
+	@Cacheable("product")
 	public Product getProductById(String productId) {
 		
         ResponseEntity<String> resultStr = restTemplate.getForEntity(URL_PRODUCT_BY_PRODUCT_ID+productId, String.class);

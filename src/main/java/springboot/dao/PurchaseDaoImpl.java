@@ -7,6 +7,7 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Repository;
 import org.springframework.web.client.RestTemplate;
@@ -60,6 +61,7 @@ public class PurchaseDaoImpl implements PurchaseDao{
     }
 
 	@Override
+	@Cacheable("purchasesByProduct")
 	public Collection<Purchase> getPurchasesByProductId(String productId) {
 		
         ResponseEntity<String> resultStr = restTemplate.getForEntity(URL_PURCHASES_BY_PRODUCT_ID+productId, String.class);

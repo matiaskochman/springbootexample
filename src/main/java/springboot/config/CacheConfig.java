@@ -16,8 +16,10 @@ public class CacheConfig {
     @Bean
     public JCacheManagerCustomizer cacheManagerCustomizer() {
         return cm -> {
-            cm.createCache("purchases", initConfiguration(Duration.TEN_MINUTES));
-            cm.createCache("userList", initConfiguration(Duration.ONE_HOUR));
+            cm.createCache("popularPurchasesByUser", initConfiguration(Duration.FIVE_MINUTES));
+            cm.createCache("userList", initConfiguration(Duration.FIVE_MINUTES));
+            cm.createCache("product", initConfiguration(Duration.FIVE_MINUTES));
+            cm.createCache("purchasesByProduct", initConfiguration(Duration.FIVE_MINUTES));
         };
     }
     private MutableConfiguration<Object, Object> initConfiguration(Duration duration) {
