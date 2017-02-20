@@ -29,28 +29,15 @@ public class RecentPurchasesController {
 	public ResponseEntity<Object> getPopularPurchases(@PathVariable String username,
 			@RequestHeader MultiValueMap<String, String> rawHeaders){
 		
-		//List<ProductAggregated> list = this.purchaseService.getAllPopularPurchases();
 		
 		List<ProductAggregated>list = this.purchaseService.getPopularPurchasesByUser(username);
 		
-		
 		String etag = generateEtag(username, list);
-//		headers.putAll(rawHeaders);		
-//				
-//		EntityTag etag = new EntityTag("Prueba"); 		
-//		List<String> ifNoneMatch = headers.getIfNoneMatch();
-//		if(!ifNoneMatch.isEmpty()){
-//			
-//		}
-//
-//        String maxAge = "20";        
-//        headers.add("ETag", "PRUEBA");
-//        headers.add("max-age", maxAge);
         
 		if(list!=null){
-			//return new ResponseEntity<>(list,headers,HttpStatus.OK);
+
 			return ResponseEntity.ok()
-					.cacheControl(CacheControl.maxAge(5, TimeUnit.SECONDS))
+					.cacheControl(CacheControl.maxAge(120, TimeUnit.SECONDS))
 					.eTag(etag).body(list);
 		}else{
 			
