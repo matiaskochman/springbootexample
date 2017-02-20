@@ -8,10 +8,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.SortedSet;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import springboot.composite.ProductAggregated;
@@ -41,7 +41,7 @@ public class PurchaseService {
 		return purchaseDao.getPurchasesByProductId(productId);
 	}
 	
-	
+	@Cacheable("purchases")
 	public List<ProductAggregated> getPopularPurchasesByUser(String username){
 		
 		User user = userService.getUser(username);
@@ -49,20 +49,27 @@ public class PurchaseService {
 			return null;
 		}
 		
-		Collection<Purchase> purchaseList = null;				
 		Map<String,ProductAggregated> productAggregatedMap = new HashMap<String,ProductAggregated>();
-		ProductAggregated prodAg = null;		
 		
 		processUser(user, productAggregatedMap);
 		
 		Set<String> keys = productAggregatedMap.keySet();
 		
 		List<ProductAggregated> productAggregatedList = new ArrayList<ProductAggregated>();		
+		
+		sortProductAggregated(productAggregatedMap, keys, productAggregatedList);		
+
+		return productAggregatedList;
+		
+	}
+
+	private void sortProductAggregated(Map<String, ProductAggregated> productAggregatedMap, Set<String> keys,
+			List<ProductAggregated> productAggregatedList) {
 		ProductAggregated pa = null;
 		
 		for (String productId : keys) {
 			pa = productAggregatedMap.get(productId);
-			boolean result = productAggregatedList.add(pa);
+			productAggregatedList.add(pa);
 		}
 
 	    Collections.sort(productAggregatedList, new Comparator<ProductAggregated>() {
@@ -75,10 +82,7 @@ public class PurchaseService {
 	        	}
 
 	        }
-	    });		
-
-		return productAggregatedList;
-		
+	    });
 	}
 
 	private void processUser(User user, Map<String, ProductAggregated> productAggregatedMap) {
@@ -86,12 +90,19 @@ public class PurchaseService {
 		ProductAggregated prodAg;
 		purchaseList = this.getLast5PurchaseByUser(user.getUsername());
 
+		System.out.println("las 5 purchase for user: "+user.getUsername());
+		for (Purchase purchase : purchaseList) {
+			System.out.println(purchase.getProductId());
+		}
 		for (Purchase purchase : purchaseList) {
 			
+			Collection<String> lastBuyersForProduct = getLastBuyersForProduct(purchase.getProductId());
+			
 			if(productAggregatedMap.containsKey(purchase.getProductId().toString())){
-				ProductAggregated pa = productAggregatedMap.get(purchase.getProductId().toString());
-				pa.getUsernameSet().add(purchase.getusername());
-				pa.setSold(pa.getSold()+1);
+				prodAg = productAggregatedMap.get(purchase.getProductId().toString());
+				prodAg.getUsernameSet().add(purchase.getusername());
+				prodAg.getUsernameSet().addAll(lastBuyersForProduct);
+				prodAg.setSold(prodAg.getSold()+1);
 			}else{
 				prodAg = new ProductAggregated();
 				
@@ -101,13 +112,25 @@ public class PurchaseService {
 				prodAg.setPrice(product.getPrice());
 				prodAg.setSize(product.getSize());
 				prodAg.getUsernameSet().add(purchase.getusername());
+				prodAg.getUsernameSet().addAll(lastBuyersForProduct);
 				prodAg.setSold(1);
 				productAggregatedMap.put(purchase.getProductId().toString(), prodAg);
 
 			}
+			
 		}
 	}
 	
+	private Collection<String> getLastBuyersForProduct(Integer productId) {
+		Collection<Purchase> purchases = getPurchasesByProductId(productId.toString());
+		
+		Collection<String> userNameList = new ArrayList<String>();
+		for (Purchase purchase : purchases) {
+			userNameList.add(purchase.getusername());
+		}
+		return userNameList;
+	}
+
 	public List<ProductAggregated> getAllPopularPurchases() {
 		
 		Collection<User> userList = userService.getAllUsers();

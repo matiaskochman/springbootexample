@@ -1,6 +1,7 @@
 package springboot.service;
 
 import java.util.Collection;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -21,6 +22,14 @@ public class UserService {
 	}
 
 	public User getUser(String username) {
-		return userDao.getUser(username);
+		
+		List<User> userList = userDao.getUserList();
+		
+        for (User user : userList) {
+			if(user.getUsername().equals(username)){
+				return user;
+			}
+		}
+        return null;
 	}	
 }

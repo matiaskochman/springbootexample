@@ -9,6 +9,7 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Repository;
 import org.springframework.web.client.RestTemplate;
@@ -59,6 +60,18 @@ public class UserDaoImpl implements UserDao{
         }
     }
 
+    @Cacheable("userList")
+    public List<User> getUserList(){
+        ResponseEntity<String> resultStr = restTemplate.getForEntity(URL_USERS, String.class);
+        LOG.debug("GetUserList http-status: {}", resultStr.getStatusCode());
+        LOG.debug("GetUserList body: {}", resultStr.getBody());
+
+        System.out.println(resultStr);
+        List<User> userList = response2UserList(resultStr);
+        
+        return userList;
+    }
+    
 	@Override
 	public User getUser(String username) {
 		
