@@ -64,7 +64,6 @@ class ProductJson{
 
 	public ProductJson() {
 		super();
-		// TODO Auto-generated constructor stub
 	}
 
 	public Product getProduct() {

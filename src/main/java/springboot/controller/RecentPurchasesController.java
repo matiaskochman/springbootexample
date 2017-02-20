@@ -45,7 +45,12 @@ public class RecentPurchasesController {
 		}
 
 	}
-
+	/**
+	 * generate an Etag with a list of ProductAggregated
+	 * @param username
+	 * @param list
+	 * @return
+	 */
 	private String generateEtag(String username, List<ProductAggregated> list) {
 		StringBuffer sb = new StringBuffer();
 		sb.append(username+"-");
