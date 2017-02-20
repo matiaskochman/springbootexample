@@ -32,10 +32,10 @@ public class RecentPurchasesController {
 		
 		List<ProductAggregated>list = this.purchaseService.getPopularPurchasesByUser(username);
 		
-		String etag = generateEtag(username, list);
         
 		if(list!=null){
 
+			String etag = generateEtag(username, list);
 			return ResponseEntity.ok()
 					.cacheControl(CacheControl.maxAge(120, TimeUnit.SECONDS))
 					.eTag(etag).body(list);
